@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:students_control/core/presentation/widgets/custom_snackbar.dart';
+import 'package:students_control/core/presentation/widgets/custom_text_field.dart';
+import 'package:students_control/core/utils/data_response.dart';
 import 'package:students_control/features/courses/domain/entities/course.dart';
 import 'package:students_control/features/courses/domain/entities/schedule.dart';
 import 'package:students_control/features/courses/presentation/providers/courses_providers.dart';
@@ -21,12 +24,14 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _codeController = TextEditingController();
+  final _groupController = TextEditingController();
   final _notesController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
     _codeController.dispose();
+    _groupController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -62,12 +67,9 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
             children: [
               SectionTitle(title: 'Nombre de la materia'),
               const SizedBox(height: 8),
-              TextFormField(
+              CustomTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  hintText: 'Cálculo I',
-                  border: OutlineInputBorder(),
-                ),
+                hintText: 'Cálculo I',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese el nombre';
@@ -76,14 +78,36 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
                 },
               ),
               const SizedBox(height: 16),
-              SectionTitle(title: 'Código (opcional)'),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _codeController,
-                decoration: const InputDecoration(
-                  hintText: 'MAT-101',
-                  border: OutlineInputBorder(),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SectionTitle(title: 'Código (opcional)'),
+                        const SizedBox(height: 8),
+                        CustomTextField(
+                          controller: _codeController,
+                          hintText: 'MAT-101',
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SectionTitle(title: 'Grupo (opcional)'),
+                        const SizedBox(height: 8),
+                        CustomTextField(
+                          controller: _groupController,
+                          hintText: 'A',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
               SectionTitle(title: 'Horario'),
@@ -264,6 +288,9 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
                         description: _notesController.text.isNotEmpty
                             ? _notesController.text
                             : null,
+                        group: _groupController.text.isNotEmpty
+                            ? _groupController.text
+                            : null,
                         createdAt: DateTime.now(),
                         updatedAt: DateTime.now(),
                       );
@@ -288,21 +315,18 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
                       // 3. Call provider
                       final result = await ref
                           .read(courseControllerProvider)
-                          .addCourse(course, schedules);
+                          .addCourse(
+                            DataResponse.success(data: course),
+                            schedules,
+                          );
 
                       if (!context.mounted) return;
 
                       if (result.data != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Materia guardada exitosamente'),
-                          ),
-                        );
+                        _showMessage(result.message);
                         Navigator.of(context).pop();
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error: ${result.message}')),
-                        );
+                        _showMessage(result.message);
                       }
                     }
                   },
@@ -327,5 +351,11 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
         ),
       ),
     );
+  }
+
+  void _showMessage(String? message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(CustomSnackbar(message: message!));
   }
 }

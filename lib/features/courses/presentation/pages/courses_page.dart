@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:students_control/core/constants/course_colors.dart';
 import 'package:students_control/core/presentation/widgets/rotating_loader.dart';
 import 'package:students_control/features/courses/presentation/providers/courses_providers.dart';
 import 'package:students_control/features/courses/presentation/widgets/course_card.dart';
@@ -38,10 +39,12 @@ class CoursesPage extends ConsumerWidget {
                         return CourseCard(
                           title: course.name,
                           subtitle:
-                              '${course.academicTerm} - ${course.code ?? "Sin código"}',
-                          icon: Icons.book_outlined,
-                          iconColor: const Color(0xFF2563EB),
-                          iconBackgroundColor: const Color(0xFFDBEAFE),
+                              '${course.group}  ${course.code ?? "Sin código"}',
+                          icon: course.icon != null ? course.icon! : '',
+                          iconColor: CourseColors.getColor(course.colorHex!),
+                          iconBackgroundColor: CourseColors.getColor(
+                            course.colorHex!,
+                          ).withValues(alpha: 0.1),
                         );
                       },
                     );

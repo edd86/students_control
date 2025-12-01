@@ -50,12 +50,12 @@ class CourseController {
   final Ref ref;
   CourseController(this.ref);
 
-  Future<DataResponse<int>> addCourse(
-    Course course,
+  Future<DataResponse<Course>> addCourse(
+    DataResponse<Course> course,
     List<Schedule> schedules,
   ) async {
     final repository = ref.read(courseRepositoryProvider);
-    final result = await repository.addCourse(course, schedules);
+    final result = await repository.addCourse(course.data!, schedules);
     if (result.data != null) {
       ref.invalidate(coursesProvider);
     }

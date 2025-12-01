@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:students_control/core/constants/course_icons.dart';
 
 class CourseCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final IconData icon;
+  final String icon;
   final Color iconColor;
   final Color iconBackgroundColor;
   final VoidCallback? onTap;
@@ -50,7 +52,14 @@ class CourseCard extends StatelessWidget {
                     color: iconBackgroundColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(icon, color: iconColor, size: 24),
+                  child: SvgPicture.asset(
+                    CourseIcons.values
+                        .firstWhere((element) => element.name == icon)
+                        .path,
+                    colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                    height: 24,
+                    width: 24,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

@@ -1,8 +1,8 @@
 import 'package:students_control/core/database/database_helper.dart';
 import 'package:students_control/core/utils/data_response.dart';
 import 'package:students_control/features/courses/data/mapper/course_mapper.dart';
+import 'package:students_control/features/courses/data/mapper/schedule_mapper.dart';
 import 'package:students_control/features/courses/data/model/course_model.dart';
-import 'package:students_control/features/courses/data/model/schedule_model.dart';
 import 'package:students_control/features/courses/domain/entities/course.dart';
 import 'package:students_control/features/courses/domain/entities/schedule.dart';
 import 'package:students_control/features/courses/domain/repo/course_repository.dart';
@@ -67,7 +67,7 @@ class CourseRepositoryImpl implements CourseRepository {
   }
 
   @override
-  Future<DataResponse<int>> addCourse(
+  Future<DataResponse<Course>> addCourse(
     Course course,
     List<Schedule> schedules,
   ) async {
@@ -75,11 +75,11 @@ class CourseRepositoryImpl implements CourseRepository {
 
     try {
       return await db.transaction((txn) async {
-        final courseModel = CourseModel.fromEntity(course);
+        final courseModel = CourseMapper.toModel(course);
         final courseId = await txn.insert('courses', courseModel.toMap());
 
         for (final schedule in schedules) {
-          final scheduleModel = ScheduleModel.fromEntity(schedule);
+          final scheduleModel = ScheduleMapper.toModel(schedule);
           // We need to create a map and override course_id
           final scheduleMap = scheduleModel.toMap();
           scheduleMap['course_id'] = courseId;
@@ -89,7 +89,7 @@ class CourseRepositoryImpl implements CourseRepository {
 
         return DataResponse.success(
           message: 'Curso creado correctamente',
-          data: courseId,
+          data: CourseMapper.toEntity(courseModel.copyWith(id: courseId)),
         );
       });
     } catch (e) {
