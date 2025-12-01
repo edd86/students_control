@@ -35,7 +35,7 @@ List<String> dataSchema = [
     icon TEXT,
     color TEXT,
     description TEXT,
-    academic_term TEXT,
+    group TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE
