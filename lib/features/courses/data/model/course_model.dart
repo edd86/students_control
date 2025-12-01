@@ -9,7 +9,7 @@ class CourseModel extends Course {
     super.icon,
     super.colorHex,
     super.description,
-    required super.academicTerm,
+    super.group,
     super.createdAt,
     super.updatedAt,
   });
@@ -23,7 +23,7 @@ class CourseModel extends Course {
       icon: map['icon'],
       colorHex: map['color'],
       description: map['description'],
-      academicTerm: map['academic_term'],
+      group: map['group'],
       createdAt: DateTime.parse(map['created_at']),
       updatedAt: DateTime.parse(map['updated_at']),
     );
@@ -38,7 +38,7 @@ class CourseModel extends Course {
       'icon': icon,
       'color': colorHex,
       'description': description,
-      'academic_term': academicTerm,
+      'group': group,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
@@ -52,7 +52,7 @@ class CourseModel extends Course {
     String? icon,
     String? colorHex,
     String? description,
-    String? academicTerm,
+    String? group,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -64,24 +64,9 @@ class CourseModel extends Course {
       icon: icon ?? this.icon,
       colorHex: colorHex ?? this.colorHex,
       description: description ?? this.description,
-      academicTerm: academicTerm ?? this.academicTerm,
+      group: group ?? this.group,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
-
-  factory CourseModel.fromEntity(Course course) {
-    return CourseModel(
-      id: course.id,
-      teacherId: course.teacherId,
-      name: course.name,
-      code: course.code,
-      icon: course.icon,
-      colorHex: course.colorHex,
-      description: course.description,
-      academicTerm: course.academicTerm,
-      createdAt: course.createdAt,
-      updatedAt: course.updatedAt,
     );
   }
 }
