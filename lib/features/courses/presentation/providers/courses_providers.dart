@@ -63,31 +63,26 @@ class CourseController {
   }
 }
 
-class CourseRegisterState {
-  final CourseColors selectedColor;
-  final CourseIcons selectedIcon;
+class ScheduleItemState {
+  final String id;
   final List<String> selectedDays;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
 
-  const CourseRegisterState({
-    this.selectedColor = CourseColors.red,
-    this.selectedIcon = CourseIcons.atom,
+  const ScheduleItemState({
+    required this.id,
     this.selectedDays = const [],
     this.startTime = const TimeOfDay(hour: 8, minute: 0),
     this.endTime = const TimeOfDay(hour: 9, minute: 30),
   });
 
-  CourseRegisterState copyWith({
-    CourseColors? selectedColor,
-    CourseIcons? selectedIcon,
+  ScheduleItemState copyWith({
     List<String>? selectedDays,
     TimeOfDay? startTime,
     TimeOfDay? endTime,
   }) {
-    return CourseRegisterState(
-      selectedColor: selectedColor ?? this.selectedColor,
-      selectedIcon: selectedIcon ?? this.selectedIcon,
+    return ScheduleItemState(
+      id: id,
       selectedDays: selectedDays ?? this.selectedDays,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
@@ -95,10 +90,38 @@ class CourseRegisterState {
   }
 }
 
+class CourseRegisterState {
+  final CourseColors selectedColor;
+  final CourseIcons selectedIcon;
+  final List<ScheduleItemState> schedules;
+
+  const CourseRegisterState({
+    this.selectedColor = CourseColors.red,
+    this.selectedIcon = CourseIcons.atom,
+    this.schedules = const [],
+  });
+
+  CourseRegisterState copyWith({
+    CourseColors? selectedColor,
+    CourseIcons? selectedIcon,
+    List<ScheduleItemState>? schedules,
+  }) {
+    return CourseRegisterState(
+      selectedColor: selectedColor ?? this.selectedColor,
+      selectedIcon: selectedIcon ?? this.selectedIcon,
+      schedules: schedules ?? this.schedules,
+    );
+  }
+}
+
 class CourseRegisterNotifier extends Notifier<CourseRegisterState> {
   @override
   CourseRegisterState build() {
-    return const CourseRegisterState();
+    return CourseRegisterState(
+      schedules: [
+        ScheduleItemState(id: DateTime.now().millisecondsSinceEpoch.toString()),
+      ],
+    );
   }
 
   void setColor(CourseColors color) {
@@ -109,22 +132,57 @@ class CourseRegisterNotifier extends Notifier<CourseRegisterState> {
     state = state.copyWith(selectedIcon: icon);
   }
 
-  void toggleDay(String day) {
-    final currentDays = List<String>.from(state.selectedDays);
-    if (currentDays.contains(day)) {
-      currentDays.remove(day);
-    } else {
-      currentDays.add(day);
-    }
-    state = state.copyWith(selectedDays: currentDays);
+  void addSchedule() {
+    final newSchedule = ScheduleItemState(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+    );
+    state = state.copyWith(schedules: [...state.schedules, newSchedule]);
   }
 
-  void setStartTime(TimeOfDay time) {
-    state = state.copyWith(startTime: time);
+  void removeSchedule(String id) {
+    if (state.schedules.length <= 1) return; // Keep at least one
+    state = state.copyWith(
+      schedules: state.schedules.where((s) => s.id != id).toList(),
+    );
   }
 
-  void setEndTime(TimeOfDay time) {
-    state = state.copyWith(endTime: time);
+  void toggleDay(String scheduleId, String day) {
+    state = state.copyWith(
+      schedules: state.schedules.map((schedule) {
+        if (schedule.id == scheduleId) {
+          final currentDays = List<String>.from(schedule.selectedDays);
+          if (currentDays.contains(day)) {
+            currentDays.remove(day);
+          } else {
+            currentDays.add(day);
+          }
+          return schedule.copyWith(selectedDays: currentDays);
+        }
+        return schedule;
+      }).toList(),
+    );
+  }
+
+  void setStartTime(String scheduleId, TimeOfDay time) {
+    state = state.copyWith(
+      schedules: state.schedules.map((schedule) {
+        if (schedule.id == scheduleId) {
+          return schedule.copyWith(startTime: time);
+        }
+        return schedule;
+      }).toList(),
+    );
+  }
+
+  void setEndTime(String scheduleId, TimeOfDay time) {
+    state = state.copyWith(
+      schedules: state.schedules.map((schedule) {
+        if (schedule.id == scheduleId) {
+          return schedule.copyWith(endTime: time);
+        }
+        return schedule;
+      }).toList(),
+    );
   }
 }
 

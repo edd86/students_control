@@ -4,7 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:students_control/features/courses/domain/entities/course.dart';
 import 'package:students_control/features/courses/domain/entities/schedule.dart';
 import 'package:students_control/features/courses/presentation/providers/courses_providers.dart';
+import 'package:students_control/features/courses/presentation/widgets/schedule_widget.dart';
 import 'package:students_control/features/courses/presentation/widgets/section_title.dart';
+import 'package:students_control/features/login/presentation/providers/login_providers.dart';
 import '../../../../core/constants/course_colors.dart';
 import '../../../../core/constants/course_icons.dart';
 
@@ -29,32 +31,10 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
     super.dispose();
   }
 
-  void _toggleDay(String day) {
-    ref.read(courseRegisterProvider.notifier).toggleDay(day);
-  }
-
-  Future<void> _selectTime(BuildContext context, bool isStartTime) async {
-    final state = ref.read(courseRegisterProvider);
-    final initialTime = isStartTime ? state.startTime : state.endTime;
-
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: initialTime,
-    );
-    if (picked != null) {
-      if (isStartTime) {
-        ref.read(courseRegisterProvider.notifier).setStartTime(picked);
-      } else {
-        ref.read(courseRegisterProvider.notifier).setEndTime(picked);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(courseRegisterProvider);
-    final weekDays = ['L', 'M', 'X', 'J', 'V', 'S'];
-
+    final teacher = ref.watch(currentUserProvider)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -96,7 +76,6 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
                 },
               ),
               const SizedBox(height: 16),
-
               SectionTitle(title: 'Código (opcional)'),
               const SizedBox(height: 8),
               TextFormField(
@@ -107,72 +86,26 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
                 ),
               ),
               const SizedBox(height: 24),
-
               SectionTitle(title: 'Horario'),
               const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Días',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: weekDays
-                          .map(
-                            (day) => _buildDayToggle(day, state.selectedDays),
-                          )
-                          .toList(),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Desde',
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(height: 8),
-                              _buildTimePicker(context, true, state.startTime),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Hasta',
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(height: 8),
-                              _buildTimePicker(context, false, state.endTime),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              ...state.schedules.map(
+                (schedule) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: ScheduleWidget(
+                    scheduleId: schedule.id,
+                    scheduleState: schedule,
+                    onRemove: () => ref
+                        .read(courseRegisterProvider.notifier)
+                        .removeSchedule(schedule.id),
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    // TODO: Implement add another schedule
+                    ref.read(courseRegisterProvider.notifier).addSchedule();
                   },
                   icon: const Icon(Icons.add_circle_outline),
                   label: const Text('Añadir otro horario'),
@@ -318,9 +251,7 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final state = ref.read(courseRegisterProvider);
-                      // 1. Create Course object
-                      // TODO: Get real teacherId from auth provider
-                      const int teacherId = 1;
+                      final int teacherId = teacher.id!;
 
                       final course = Course(
                         teacherId: teacherId,
@@ -329,29 +260,30 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
                             ? _codeController.text
                             : null,
                         icon: state.selectedIcon.name,
-                        colorHex: state
-                            .selectedColor
-                            .name, // Storing enum name as color identifier
+                        colorHex: state.selectedColor.name,
                         description: _notesController.text.isNotEmpty
                             ? _notesController.text
                             : null,
-                        academicTerm:
-                            '2025-1', // TODO: Make dynamic or from settings
                         createdAt: DateTime.now(),
                         updatedAt: DateTime.now(),
                       );
 
                       // 2. Create Schedule objects
                       final weekDays = ['L', 'M', 'X', 'J', 'V', 'S'];
-                      final schedules = state.selectedDays.map((day) {
-                        int dayOfWeek = weekDays.indexOf(day) + 1;
+                      final List<Schedule> schedules = [];
 
-                        return Schedule(
-                          dayOfWeek: dayOfWeek,
-                          startTime: state.startTime,
-                          endTime: state.endTime,
-                        );
-                      }).toList();
+                      for (final scheduleState in state.schedules) {
+                        for (final day in scheduleState.selectedDays) {
+                          int dayOfWeek = weekDays.indexOf(day) + 1;
+                          schedules.add(
+                            Schedule(
+                              dayOfWeek: dayOfWeek,
+                              startTime: scheduleState.startTime,
+                              endTime: scheduleState.endTime,
+                            ),
+                          );
+                        }
+                      }
 
                       // 3. Call provider
                       final result = await ref
@@ -392,56 +324,6 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
               const SizedBox(height: 24),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDayToggle(String day, List<String> selectedDays) {
-    final isSelected = selectedDays.contains(day);
-    return GestureDetector(
-      onTap: () => _toggleDay(day),
-      child: Container(
-        width: 40,
-        height: 40,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isSelected ? Colors.blue.shade50 : Colors.white,
-          border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey.shade300,
-          ),
-        ),
-        child: Text(
-          day,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.blue : Colors.black87,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimePicker(
-    BuildContext context,
-    bool isStartTime,
-    TimeOfDay time,
-  ) {
-    return InkWell(
-      onTap: () => _selectTime(context, isStartTime),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(time.format(context), style: const TextStyle(fontSize: 16)),
-            const Icon(Icons.access_time, size: 20, color: Colors.grey),
-          ],
         ),
       ),
     );

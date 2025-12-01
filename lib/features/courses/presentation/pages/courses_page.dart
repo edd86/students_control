@@ -60,7 +60,7 @@ class CoursesPage extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go('/register_course'),
+        onPressed: () => context.push('/register_course'),
         backgroundColor: const Color(0xFF2563EB), // Blue color
         child: const Icon(Icons.add, color: Colors.white),
       ),
