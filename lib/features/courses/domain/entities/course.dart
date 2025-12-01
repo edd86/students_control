@@ -6,7 +6,7 @@ class Course {
   final String? icon;
   final String? colorHex;
   final String? description;
-  final String? academicTerm;
+  final String? group;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -18,7 +18,7 @@ class Course {
     this.icon,
     this.colorHex,
     this.description,
-    this.academicTerm,
+    this.group,
     this.createdAt,
     this.updatedAt,
   });
