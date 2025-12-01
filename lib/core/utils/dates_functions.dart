@@ -65,4 +65,14 @@ class DateFunctions {
       return 'Buenas noches';
     }
   }
+
+  static String academicTerm(DateTime date) {
+    final year = date.year;
+    final month = date.month;
+    if (month < 7) {
+      return '1/$year';
+    } else {
+      return '2/$year';
+    }
+  }
 }
