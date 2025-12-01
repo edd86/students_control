@@ -41,15 +41,4 @@ class ScheduleModel extends Schedule {
   static String _formatTime(TimeOfDay time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
-
-  factory ScheduleModel.fromEntity(Schedule schedule) {
-    return ScheduleModel(
-      id: schedule.id,
-      courseId: schedule.courseId,
-      dayOfWeek: schedule.dayOfWeek,
-      startTime: schedule.startTime,
-      endTime: schedule.endTime,
-      classroom: schedule.classroom,
-    );
-  }
 }
