@@ -57,9 +57,11 @@ List<String> dataSchema = [
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     course_id INTEGER NOT NULL,
     student_id INTEGER NOT NULL,
+    schedule_id INTEGER NOT NULL,
     enrolled_at TEXT,
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (schedule_id) REFERENCES schedules(id) ON DELETE CASCADE,
     UNIQUE(course_id, student_id)
   );
   ''',
