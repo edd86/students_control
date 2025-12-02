@@ -9,4 +9,5 @@ abstract class CourseRepository {
     Course course,
     List<Schedule> schedules,
   );
+  Future<DataResponse<int>> countStudentsByCourseId(int courseId);
 }

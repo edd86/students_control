@@ -96,4 +96,10 @@ class CourseRepositoryImpl implements CourseRepository {
       return DataResponse.error(e.toString());
     }
   }
+
+  @override
+  Future<DataResponse<int>> countStudentsByCourseId(int courseId) {
+    // TODO: implement countStudentsByCourseId
+    throw UnimplementedError();
+  }
 }

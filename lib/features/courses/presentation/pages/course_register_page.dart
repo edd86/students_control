@@ -8,7 +8,7 @@ import 'package:students_control/features/courses/domain/entities/course.dart';
 import 'package:students_control/features/courses/domain/entities/schedule.dart';
 import 'package:students_control/features/courses/presentation/providers/courses_providers.dart';
 import 'package:students_control/features/courses/presentation/widgets/schedule_widget.dart';
-import 'package:students_control/features/courses/presentation/widgets/section_title.dart';
+import 'package:students_control/core/presentation/widgets/section_title.dart';
 import 'package:students_control/features/login/presentation/providers/login_providers.dart';
 import '../../../../core/constants/course_colors.dart';
 import '../../../../core/constants/course_icons.dart';
@@ -331,15 +331,10 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     textStyle: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: const Text('Guardar Materia'),
