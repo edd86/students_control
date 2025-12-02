@@ -15,7 +15,9 @@ class CoursesPage extends ConsumerWidget {
     final coursesAsyncValue = ref.watch(coursesProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6), // Light grey background
+      backgroundColor: Theme.of(
+        context,
+      ).scaffoldBackgroundColor, // Light grey background
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
@@ -45,6 +47,8 @@ class CoursesPage extends ConsumerWidget {
                           iconBackgroundColor: CourseColors.getColor(
                             course.colorHex!,
                           ).withValues(alpha: 0.1),
+                          onTap: () =>
+                              context.push('/course_details/${course.id}'),
                         );
                       },
                     );
@@ -64,8 +68,7 @@ class CoursesPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/register_course'),
-        backgroundColor: const Color(0xFF2563EB), // Blue color
-        child: const Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add),
       ),
     );
   }

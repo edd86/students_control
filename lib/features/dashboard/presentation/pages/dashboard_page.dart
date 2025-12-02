@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:students_control/features/courses/presentation/pages/courses_page.dart';
 import 'package:students_control/features/dashboard/presentation/pages/home_page.dart';
 import 'package:students_control/features/dashboard/presentation/providers/dashboard_providers.dart';
+import 'package:students_control/features/students/presentation/pages/students_page.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -18,7 +19,7 @@ class DashboardPage extends ConsumerWidget {
         children: [
           HomePage(),
           CoursesPage(),
-          Center(child: Text('Alumnos')), // Placeholder
+          StudentsPage(),
           Center(child: Text('Perfil')), // Placeholder
         ],
       ),

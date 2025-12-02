@@ -46,6 +46,18 @@ class AppTheme {
       backgroundColor: _lightPrimaryColor,
       contentTextStyle: TextStyle(color: _lightOnPrimaryColor),
     ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: _lightPrimaryColor,
+      foregroundColor: _lightOnPrimaryColor,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _lightPrimaryColor,
+        foregroundColor: _lightOnPrimaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData(
@@ -76,6 +88,18 @@ class AppTheme {
     snackBarTheme: const SnackBarThemeData(
       backgroundColor: _darkPrimaryColor,
       contentTextStyle: TextStyle(color: _darkOnPrimaryColor),
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: _darkPrimaryColor,
+      foregroundColor: _darkOnPrimaryColor,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _darkPrimaryColor,
+        foregroundColor: _darkOnPrimaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+      ),
     ),
   );
 }
