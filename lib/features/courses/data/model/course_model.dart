@@ -1,17 +1,26 @@
-import 'package:students_control/features/courses/domain/entities/course.dart';
+class CourseModel {
+  final int? id;
+  final int teacherId;
+  final String name;
+  final String? code;
+  final String? icon;
+  final String? colorHex;
+  final String? description;
+  final String? group;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-class CourseModel extends Course {
-  const CourseModel({
-    super.id,
-    required super.teacherId,
-    required super.name,
-    super.code,
-    super.icon,
-    super.colorHex,
-    super.description,
-    super.group,
-    super.createdAt,
-    super.updatedAt,
+  CourseModel({
+    this.id,
+    required this.teacherId,
+    required this.name,
+    this.code,
+    this.icon,
+    this.colorHex,
+    this.description,
+    this.group,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory CourseModel.fromMap(Map<String, dynamic> map) {
@@ -23,7 +32,7 @@ class CourseModel extends Course {
       icon: map['icon'],
       colorHex: map['color'],
       description: map['description'],
-      group: map['group'],
+      group: map['course_group'],
       createdAt: DateTime.parse(map['created_at']),
       updatedAt: DateTime.parse(map['updated_at']),
     );
@@ -38,9 +47,13 @@ class CourseModel extends Course {
       'icon': icon,
       'color': colorHex,
       'description': description,
-      'group': group,
-      'created_at': createdAt?.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
+      'course_group': group,
+      'created_at': createdAt == null
+          ? DateTime.now()
+          : createdAt!.toIso8601String(),
+      'updated_at': updatedAt == null
+          ? DateTime.now()
+          : updatedAt!.toIso8601String(),
     };
   }
 

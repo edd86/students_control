@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:students_control/features/courses/domain/entities/schedule.dart';
 
-class ScheduleModel extends Schedule {
-  const ScheduleModel({
-    super.id,
-    super.courseId,
-    required super.dayOfWeek,
-    required super.startTime,
-    required super.endTime,
-    super.classroom,
+class ScheduleModel {
+  final int? id;
+  final int? courseId;
+  final int dayOfWeek;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+  final String? classroom;
+
+  ScheduleModel({
+    this.id,
+    this.courseId,
+    required this.dayOfWeek,
+    required this.startTime,
+    required this.endTime,
+    this.classroom,
   });
 
   factory ScheduleModel.fromMap(Map<String, dynamic> map) {
     return ScheduleModel(
-      id: map['id'] as int?,
-      courseId: map['course_id'] as int?,
-      dayOfWeek: map['day_of_week'] as int,
-      startTime: _parseTime(map['start_time'] as String),
-      endTime: _parseTime(map['end_time'] as String),
-      classroom: map['classroom'] as String?,
+      id: map['id'],
+      courseId: map['course_id'],
+      dayOfWeek: map['day_of_week'],
+      startTime: _parseTime(map['start_time']),
+      endTime: _parseTime(map['end_time']),
+      classroom: map['classroom'],
     );
   }
 
