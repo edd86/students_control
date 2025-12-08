@@ -88,6 +88,8 @@ class _TeacherRegisterPageState extends ConsumerState<TeacherRegisterPage> {
                 CustomTextField(
                   controller: _nameController,
                   hintText: 'Nombre y Apellido',
+                  keyboardType: TextInputType.name,
+                  textCapitalization: TextCapitalization.words,
                   validator: (value) {
                     if (value!.isEmpty || value == '') {
                       return 'El nombre es requerido.';
@@ -121,6 +123,7 @@ class _TeacherRegisterPageState extends ConsumerState<TeacherRegisterPage> {
                 const SizedBox(height: 8),
                 CustomTextField(
                   controller: _teacherIdController,
+                  keyboardType: TextInputType.name,
                   hintText: 'ID de Docente',
                 ),
                 const SizedBox(height: 16),
@@ -132,6 +135,8 @@ class _TeacherRegisterPageState extends ConsumerState<TeacherRegisterPage> {
                   controller: _passwordController,
                   hintText: 'Mínimo 8 caracteres',
                   obscureText: !_isPasswordVisible,
+                  keyboardType: TextInputType.visiblePassword,
+
                   suffixIcon: IconButton(
                     icon: Icon(
                       _isPasswordVisible
@@ -164,6 +169,7 @@ class _TeacherRegisterPageState extends ConsumerState<TeacherRegisterPage> {
                   controller: _confirmPasswordController,
                   hintText: 'Confirma tu contraseña',
                   obscureText: !_isConfirmPasswordVisible,
+                  keyboardType: TextInputType.visiblePassword,
                   suffixIcon: IconButton(
                     icon: Icon(
                       _isConfirmPasswordVisible
