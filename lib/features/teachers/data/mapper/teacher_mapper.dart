@@ -4,9 +4,12 @@ import '../model/teacher_model.dart';
 class TeacherMapper {
   static Teacher toEntity(TeacherModel model) {
     return Teacher(
+      id: model.id,
       fullName: model.fullName,
       email: model.email,
       passwordHash: model.passwordHash,
+      teacherIdentifier: model.teacherIdentifier,
+      profilePhoto: model.profilePhoto,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
     );

@@ -1,27 +1,34 @@
-import '../../domain/entities/teacher.dart';
+class TeacherModel {
+  final int? id;
+  final String fullName;
+  final String email;
+  final String passwordHash;
+  final String? teacherIdentifier;
+  final String? profilePhoto;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-class TeacherModel extends Teacher {
   TeacherModel({
-    super.id,
-    required super.fullName,
-    required super.email,
-    required super.passwordHash,
-    super.teacherIdentifier,
-    super.profilePhoto,
-    required super.createdAt,
-    required super.updatedAt,
+    this.id,
+    required this.fullName,
+    required this.email,
+    required this.passwordHash,
+    this.teacherIdentifier,
+    this.profilePhoto,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory TeacherModel.fromMap(Map<String, dynamic> map) {
     return TeacherModel(
-      id: map['id'] as int?,
-      fullName: map['full_name'] as String,
-      email: map['email'] as String,
-      passwordHash: map['password_hash'] as String,
-      teacherIdentifier: map['teacher_identifier'] as String?,
-      profilePhoto: map['profile_photo'] as String?,
-      createdAt: DateTime.parse(map['created_at'] as String),
-      updatedAt: DateTime.parse(map['updated_at'] as String),
+      id: map['id'],
+      fullName: map['full_name'],
+      email: map['email'],
+      passwordHash: map['password_hash'],
+      teacherIdentifier: map['teacher_identifier'],
+      profilePhoto: map['profile_photo'],
+      createdAt: DateTime.parse(map['created_at']),
+      updatedAt: DateTime.parse(map['updated_at']),
     );
   }
 
