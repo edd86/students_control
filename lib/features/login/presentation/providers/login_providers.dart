@@ -50,11 +50,19 @@ class LoginController extends AsyncNotifier<void> {
     return null;
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(
+    String email,
+    String password,
+    String teacherIdentifier,
+  ) async {
     state = const AsyncValue.loading();
 
     final repo = ref.read(loginRepoProvider);
-    final loginData = Login(emailId: email, password: password);
+    final loginData = Login(
+      emailId: email,
+      password: password,
+      teacherIdentifier: teacherIdentifier,
+    );
 
     // Guard against async gaps if needed, but here we just await
     final result = await repo.login(loginData);
