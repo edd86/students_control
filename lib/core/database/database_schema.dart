@@ -5,7 +5,7 @@ List<String> dataSchema = [
     full_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    teacher_identifier TEXT,
+    teacher_identifier TEXT UNIQUE,
     profile_photo TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
@@ -35,7 +35,7 @@ List<String> dataSchema = [
     icon TEXT,
     color TEXT,
     description TEXT,
-    group TEXT,
+    course_group TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE
