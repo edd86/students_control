@@ -1,18 +1,28 @@
-import 'package:students_control/features/students/domain/entity/student.dart';
+class StudentModel {
+  final int? id;
+  final String firstName;
+  final String lastName;
+  final String? identificationNumber;
+  final String? email;
+  final String? phone;
+  final String? gradeLevel;
+  final String? notes;
+  final String? profilePhoto;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-class StudentModel extends Student {
   StudentModel({
-    super.id,
-    required super.firstName,
-    required super.lastName,
-    super.identificationNumber,
-    super.email,
-    super.phone,
-    super.gradeLevel,
-    super.notes,
-    super.profilePhoto,
-    required super.createdAt,
-    required super.updatedAt,
+    this.id,
+    required this.firstName,
+    required this.lastName,
+    this.identificationNumber,
+    this.email,
+    this.phone,
+    this.gradeLevel,
+    this.notes,
+    this.profilePhoto,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory StudentModel.fromMap(Map<String, dynamic> map) {
@@ -42,8 +52,12 @@ class StudentModel extends Student {
       'grade_level': gradeLevel,
       'notes': notes,
       'profile_photo': profilePhoto,
-      'created_at': createdAt?.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
+      'created_at': createdAt == null
+          ? DateTime.now()
+          : createdAt!.toIso8601String(),
+      'updated_at': updatedAt == null
+          ? DateTime.now()
+          : updatedAt!.toIso8601String(),
     };
   }
 
