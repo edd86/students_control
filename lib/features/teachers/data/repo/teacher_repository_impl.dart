@@ -1,5 +1,6 @@
 import 'package:students_control/core/database/database_helper.dart';
 import 'package:students_control/core/utils/data_response.dart';
+import 'package:students_control/features/login/data/services/password_hasher_impl.dart';
 import 'package:students_control/features/teachers/data/mapper/teacher_mapper.dart';
 import 'package:students_control/features/teachers/domain/entities/teacher.dart';
 import 'package:students_control/features/teachers/domain/repo/teacher_repository.dart';
@@ -11,7 +12,16 @@ class TeacherRepositoryImpl implements TeacherRepository {
     final teacherModel = TeacherMapper.toModel(teacher);
 
     try {
-      final result = await db.insert('teachers', teacherModel.toMap());
+      final result = await db.insert(
+        'teachers',
+        teacherModel
+            .copyWith(
+              passwordHash: PasswordHasherImpl().hashPassword(
+                teacher.passwordHash,
+              ),
+            )
+            .toMap(),
+      );
       if (result <= 0) {
         return DataResponse.error('Error al registrar el docente');
       }
