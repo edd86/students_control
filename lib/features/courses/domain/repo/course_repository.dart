@@ -9,5 +9,11 @@ abstract class CourseRepository {
     Course course,
     List<Schedule> schedules,
   );
+  Future<DataResponse<List<Schedule>>> getSchedulesByCourseId(int courseId);
   Future<DataResponse<int>> countStudentsByCourseId(int courseId);
+  Future<DataResponse<double>> getCourseAverage(int courseId);
+  Future<DataResponse<double>> getDailyAttendancePercentage(
+    int courseId,
+    DateTime date,
+  );
 }
