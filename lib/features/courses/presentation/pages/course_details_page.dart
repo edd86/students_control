@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:students_control/core/constants/attendance_status.dart';
+import 'package:students_control/core/presentation/widgets/rotating_loader.dart';
 import 'package:students_control/features/courses/presentation/providers/courses_providers.dart';
 import 'package:students_control/features/courses/presentation/widgets/attendance_summary_card.dart';
+import 'package:students_control/features/enrollments/presentation/providers/enrollments_providers.dart';
+import 'package:students_control/features/courses/presentation/widgets/course_schedule_card.dart';
 import 'package:students_control/features/courses/presentation/widgets/course_stats_card.dart';
 import 'package:students_control/features/courses/presentation/widgets/student_list_item.dart';
-import 'package:students_control/features/students/domain/entity/student.dart';
 
 class CourseDetailsPage extends ConsumerStatefulWidget {
-  final String courseId;
+  final int courseId;
 
   const CourseDetailsPage({super.key, required this.courseId});
 
@@ -19,49 +22,6 @@ class CourseDetailsPage extends ConsumerStatefulWidget {
 class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
   final TextEditingController _searchController = TextEditingController();
 
-  // Mock data for students
-  final List<Student> _allStudents = [
-    Student(
-      id: 1,
-      firstName: 'Alejandra',
-      lastName: 'Vargas',
-      profilePhoto: 'https://i.pravatar.cc/150?u=1',
-    ),
-    Student(
-      id: 2,
-      firstName: 'Benjamín',
-      lastName: 'Ríos',
-      profilePhoto: 'https://i.pravatar.cc/150?u=2',
-    ),
-    Student(
-      id: 3,
-      firstName: 'Carla',
-      lastName: 'Mendoza',
-      profilePhoto: 'https://i.pravatar.cc/150?u=3',
-    ),
-    Student(
-      id: 4,
-      firstName: 'Daniel',
-      lastName: 'Soto',
-      profilePhoto: 'https://i.pravatar.cc/150?u=4',
-    ),
-    Student(
-      id: 5,
-      firstName: 'Elena',
-      lastName: 'Flores',
-      profilePhoto: 'https://i.pravatar.cc/150?u=5',
-    ),
-  ];
-
-  // Mock status for students
-  final Map<int, StudentStatus> _studentStatuses = {
-    1: StudentStatus.presente,
-    2: StudentStatus.ausente,
-    3: StudentStatus.presente,
-    4: StudentStatus.tardanza,
-    5: StudentStatus.licencia,
-  };
-
   @override
   void dispose() {
     _searchController.dispose();
@@ -71,6 +31,7 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final coursesAsync = ref.watch(coursesProvider);
+    final studentCountAsync = ref.watch(studentCountProvider(widget.courseId));
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -84,19 +45,32 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
         title: coursesAsync.when(
           data: (courses) {
             final course = courses.firstWhere(
-              (c) => c.id.toString() == widget.courseId,
-              orElse: () => courses.first, // Fallback for safety
+              (c) => c.id == widget.courseId,
+              orElse: () => courses.first,
             );
-            return Text(
-              course.name,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  course.name,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                Text(
+                  course.group ?? '',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
             );
           },
-          loading: () => const Text(''),
+          loading: () => const RotatingLoader(size: 15),
           error: (_, __) => const Text('Error'),
         ),
         centerTitle: true,
@@ -115,26 +89,58 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
             Row(
               children: [
                 Expanded(
-                  child: CourseStatsCard(
-                    title: 'Total Alumnos',
-                    value: _allStudents.length.toString(),
-                    valueColor: Colors.blue,
+                  child: studentCountAsync.when(
+                    data: (count) => CourseStatsCard(
+                      title: 'Total Alumnos',
+                      value: count.toString(),
+                      valueColor: Colors.blue,
+                    ),
+                    loading: () => const RotatingLoader(size: 15),
+                    error: (_, __) => const CourseStatsCard(
+                      title: 'Total Alumnos',
+                      value: '-',
+                      valueColor: Colors.red,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: CourseStatsCard(
-                    title: 'Promedio General',
-                    value: '8.5',
-                    valueColor: Colors.blue,
-                  ),
+                  child: ref
+                      .watch(courseAverageProvider(widget.courseId))
+                      .when(
+                        data: (average) => CourseStatsCard(
+                          title: 'Promedio General',
+                          value: average.toStringAsFixed(1),
+                          valueColor: Colors.blue,
+                        ),
+                        loading: () => const RotatingLoader(size: 15),
+                        error: (_, __) => const CourseStatsCard(
+                          title: 'Promedio General',
+                          value: '-',
+                          valueColor: Colors.red,
+                        ),
+                      ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
 
+            // Schedule Card
+            CourseScheduleCard(courseId: widget.courseId),
+            const SizedBox(height: 16),
+
             // Attendance Card
-            const AttendanceSummaryCard(percentage: 92),
+            ref
+                .watch(courseDailyAttendanceProvider(widget.courseId))
+                .when(
+                  data: (percentage) =>
+                      AttendanceSummaryCard(percentage: percentage),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: RotatingLoader(size: 20),
+                  ),
+                  error: (_, __) => const AttendanceSummaryCard(percentage: 0),
+                ),
             const SizedBox(height: 24),
 
             // Search Bar
@@ -155,23 +161,45 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
             const SizedBox(height: 16),
 
             // Student List
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _allStudents.length,
-              itemBuilder: (context, index) {
-                final student = _allStudents[index];
-                final status =
-                    _studentStatuses[student.id] ?? StudentStatus.presente;
-                return StudentListItem(
-                  student: student,
-                  status: status,
-                  onTap: () {
-                    // Navigate to student details
+            ref
+                .watch(enrolledStudentsProvider(widget.courseId))
+                .when(
+                  data: (enrolledStudents) {
+                    if (enrolledStudents.isEmpty) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(32.0),
+                          child: Text('No hay alumnos inscritos'),
+                        ),
+                      );
+                    }
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: enrolledStudents.length,
+                      itemBuilder: (context, index) {
+                        final enrolled = enrolledStudents[index];
+                        // Default to 'presente' if null, or maybe 'presente' is just a visual default
+                        // Per user current logic: status ?? AttendanceStatus.presente
+                        final status =
+                            enrolled.status ?? AttendanceStatus.presente;
+
+                        return StudentListItem(
+                          student: enrolled.student,
+                          status: status,
+                          onTap: () {
+                            // Navigate to student details
+                          },
+                        );
+                      },
+                    );
                   },
-                );
-              },
-            ),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: Center(child: RotatingLoader(size: 30)),
+                  ),
+                  error: (error, _) => Center(child: Text('Error: $error')),
+                ),
             const SizedBox(height: 80), // Space for FAB
           ],
         ),

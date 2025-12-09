@@ -44,6 +44,47 @@ final coursesProvider = FutureProvider.autoDispose<List<Course>>((ref) async {
   return response.data!;
 });
 
+final courseSchedulesProvider = FutureProvider.family
+    .autoDispose<List<Schedule>, int>((ref, courseId) async {
+      final repository = ref.watch(courseRepositoryProvider);
+      final response = await repository.getSchedulesByCourseId(courseId);
+
+      if (response.data == null) {
+        throw Exception(response.message);
+      }
+
+      return response.data!;
+    });
+
+final courseAverageProvider = FutureProvider.family.autoDispose<double, int>((
+  ref,
+  courseId,
+) async {
+  final repository = ref.watch(courseRepositoryProvider);
+  final response = await repository.getCourseAverage(courseId);
+
+  if (response.data == null) {
+    throw Exception(response.message);
+  }
+
+  return response.data!;
+});
+
+final courseDailyAttendanceProvider = FutureProvider.family
+    .autoDispose<double, int>((ref, courseId) async {
+      final repository = ref.watch(courseRepositoryProvider);
+      final response = await repository.getDailyAttendancePercentage(
+        courseId,
+        DateTime.now(),
+      );
+
+      if (response.data == null) {
+        throw Exception(response.message);
+      }
+
+      return response.data!;
+    });
+
 final courseControllerProvider = Provider((ref) => CourseController(ref));
 
 class CourseController {
