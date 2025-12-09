@@ -58,7 +58,7 @@ List<String> dataSchema = [
     course_id INTEGER NOT NULL,
     student_id INTEGER NOT NULL,
     schedule_id INTEGER NOT NULL,
-    enrolled_at TEXT,
+    enrolled_at TEXT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     FOREIGN KEY (schedule_id) REFERENCES schedules(id) ON DELETE CASCADE,
@@ -70,7 +70,7 @@ List<String> dataSchema = [
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     course_id INTEGER NOT NULL,
     name TEXT NOT NULL,
-    percent REAL DEFAULT 0.0,
+    percent REAL NOT NULL,
     due_date TEXT,
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
   );
