@@ -28,7 +28,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/course_details/:id',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
-          return CourseDetailsPage(courseId: id);
+          return CourseDetailsPage(courseId: int.parse(id));
         },
       ),
       GoRoute(
