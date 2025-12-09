@@ -4,8 +4,7 @@ import '../../domain/services/password_hasher.dart';
 class PasswordHasherImpl implements PasswordHasher {
   @override
   String hashPassword(String password) {
-    final String salt = BCrypt.gensalt();
-    return BCrypt.hashpw(password, salt);
+    return BCrypt.hashpw(password, BCrypt.gensalt());
   }
 
   @override
