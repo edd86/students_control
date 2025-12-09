@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:students_control/core/presentation/widgets/rotating_loader.dart';
 import 'package:students_control/features/students/domain/entity/student.dart';
 import 'package:students_control/features/students/presentation/providers/students_provider.dart';
 import 'package:students_control/features/students/presentation/widgets/students_custom_header.dart';
@@ -13,10 +15,12 @@ class StudentsPage extends ConsumerStatefulWidget {
 
 class _StudentsPageState extends ConsumerState<StudentsPage> {
   final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void dispose() {
     _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -56,6 +60,12 @@ class _StudentsPageState extends ConsumerState<StudentsPage> {
                   ),
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
                 ),
+                onChanged: (value) {
+                  if (_debounce?.isActive ?? false) _debounce!.cancel();
+                  _debounce = Timer(const Duration(milliseconds: 500), () {
+                    ref.read(studentSearchQueryProvider.notifier).state = value;
+                  });
+                },
               ),
             ),
             const SizedBox(height: 16),
@@ -83,7 +93,7 @@ class _StudentsPageState extends ConsumerState<StudentsPage> {
                     },
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(child: RotatingLoader(size: 30)),
                 error: (error, stack) => Center(
                   child: Text(
                     'Error: $error',

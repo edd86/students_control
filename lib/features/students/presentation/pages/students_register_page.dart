@@ -2,6 +2,10 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:students_control/core/presentation/widgets/custom_snackbar.dart';
+import 'package:students_control/core/presentation/widgets/rotating_loader.dart';
+import 'package:students_control/features/students/domain/entity/student.dart';
+import 'package:students_control/features/students/presentation/providers/students_provider.dart';
 import 'package:students_control/core/presentation/widgets/custom_text_field.dart';
 import 'package:students_control/core/presentation/widgets/form_label.dart';
 import 'package:students_control/core/presentation/widgets/section_title.dart';
@@ -218,7 +222,45 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {}
+                    if (_formKey.currentState!.validate()) {
+                      final student = Student(
+                        firstName: _firstNameController.text.trim(),
+                        lastName: _lastNameController.text.trim(),
+                        identificationNumber: _idNumberController.text.trim(),
+                        email: _emailController.text.trim(),
+                        phone: _phoneController.text.trim(),
+                        gradeLevel: _gradeController.text.trim(),
+                        notes: _notesController.text.trim(),
+                        // profilePhoto: TODO: Handle photo upload
+                      );
+
+                      // Show loading indicator
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) =>
+                            const Center(child: RotatingLoader()),
+                      );
+
+                      ref
+                          .read(studentsControllerProvider)
+                          .createStudent(
+                            student: student,
+                            onSuccess: () {
+                              // Pop loading dialog
+                              Navigator.of(context).pop();
+                              _showMessage('Estudiante creado correctamente');
+                              // Pop page
+                              context.pop();
+                            },
+                            onError: (message) {
+                              // Pop loading dialog
+                              Navigator.of(context).pop();
+                              // Show error message
+                              _showMessage(message);
+                            },
+                          );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
@@ -258,5 +300,11 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
         ),
       ),
     );
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(CustomSnackbar(message: message));
   }
 }

@@ -53,10 +53,10 @@ class StudentModel {
       'notes': notes,
       'profile_photo': profilePhoto,
       'created_at': createdAt == null
-          ? DateTime.now()
+          ? DateTime.now().toIso8601String()
           : createdAt!.toIso8601String(),
       'updated_at': updatedAt == null
-          ? DateTime.now()
+          ? DateTime.now().toIso8601String()
           : updatedAt!.toIso8601String(),
     };
   }

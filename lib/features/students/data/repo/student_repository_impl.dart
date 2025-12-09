@@ -33,4 +33,58 @@ class StudentRepositoryImpl implements StudentRepository {
       return DataResponse.error(e.toString());
     }
   }
+
+  @override
+  Future<DataResponse<Student>> createStudent(Student student) async {
+    final db = await DatabaseHelper.instance.database;
+    final studentModel = StudentMapper.toModel(student);
+
+    try {
+      final result = await db.insert('students', studentModel.toMap());
+      if (result <= 0) {
+        return DataResponse.error('Error al crear al Estudiante');
+      }
+      return DataResponse.success(
+        message: 'Estudiante creado correctamente',
+        data: StudentMapper.toEntity(studentModel.copyWith(id: result)),
+      );
+    } catch (e) {
+      return DataResponse.error(e.toString());
+    }
+  }
+
+  @override
+  Future<DataResponse<List<Student>>> findStudentsByNameId(
+    String nameId,
+  ) async {
+    final db = await DatabaseHelper.instance.database;
+
+    try {
+      final result = await db.query(
+        'students',
+        where:
+            'first_name LIKE ? OR last_name LIKE ? OR identification_number LIKE ?',
+        whereArgs: ['%$nameId%', '%$nameId%', '%$nameId%'],
+      );
+
+      if (result.isEmpty) {
+        return DataResponse.success(
+          message: 'No hay estudiantes registrados',
+          data: [],
+        );
+      }
+
+      return DataResponse.success(
+        message: 'Estudiantes obtenidos correctamente',
+        data: result
+            .map(
+              (studentMap) =>
+                  StudentMapper.toEntity(StudentModel.fromMap(studentMap)),
+            )
+            .toList(),
+      );
+    } catch (e) {
+      return DataResponse.error(e.toString());
+    }
+  }
 }
