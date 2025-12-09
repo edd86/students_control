@@ -237,7 +237,10 @@ class _CourseRegisterPageState extends ConsumerState<CourseRegisterPage> {
                                     state.selectedColor.color,
                                     BlendMode.srcIn,
                                   )
-                                : null,
+                                : ColorFilter.mode(
+                                    Theme.of(context).colorScheme.onSurface,
+                                    BlendMode.srcIn,
+                                  ),
                           ),
                           const SizedBox(height: 2),
                           Text(
