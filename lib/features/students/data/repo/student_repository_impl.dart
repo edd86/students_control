@@ -11,7 +11,7 @@ class StudentRepositoryImpl implements StudentRepository {
     final db = await DatabaseHelper.instance.database;
 
     try {
-      final result = await db.query('students');
+      final result = await db.query('students', orderBy: 'last_name ASC');
 
       if (result.isEmpty) {
         return DataResponse.success(
