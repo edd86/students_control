@@ -45,7 +45,7 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -84,7 +84,7 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
                           child: Icon(
                             Icons.image, // Placeholder for the art in image
                             size: 40,
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                         ),
                         Positioned(
@@ -92,8 +92,8 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
                           right: 0,
                           child: Container(
                             padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF2563EB), // Blue color
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary, // Blue color
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -112,7 +112,7 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Text(
@@ -135,6 +135,7 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
               CustomTextField(
                 controller: _firstNameController,
                 hintText: 'Ingrese el nombre del alumno',
+                textCapitalization: TextCapitalization.words,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese el nombre';
@@ -147,6 +148,7 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
               CustomTextField(
                 controller: _lastNameController,
                 hintText: 'Ingrese los apellidos del alumno',
+                textCapitalization: TextCapitalization.words,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese los apellidos';
@@ -171,6 +173,7 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
                 controller: _emailController,
                 hintText: 'ejemplo@correo.com',
                 keyboardType: TextInputType.emailAddress,
+                textCapitalization: TextCapitalization.none,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese el correo';
@@ -205,12 +208,15 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
               FormLabel(label: 'Curso o Grado'),
               CustomTextField(
                 controller: _gradeController,
+                textCapitalization: TextCapitalization.words,
                 hintText: 'Ej. 5to Grado',
               ),
               const SizedBox(height: 16),
               FormLabel(label: 'Observaciones Adicionales'),
               CustomTextField(
                 controller: _notesController,
+                keyboardType: TextInputType.multiline,
+                textCapitalization: TextCapitalization.sentences,
                 hintText: 'Añadir notas importantes sobre el alumno...',
                 maxLines: 4,
               ),
@@ -284,10 +290,10 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
                 height: 50,
                 child: TextButton(
                   onPressed: () => context.pop(),
-                  child: const Text(
+                  child: Text(
                     'Cancelar',
                     style: TextStyle(
-                      color: Color(0xFF2563EB),
+                      color: colorScheme.primary,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
