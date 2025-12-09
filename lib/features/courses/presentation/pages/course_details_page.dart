@@ -32,14 +32,15 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
   Widget build(BuildContext context) {
     final coursesAsync = ref.watch(coursesProvider);
     final studentCountAsync = ref.watch(studentCountProvider(widget.courseId));
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSurface),
           onPressed: () => context.pop(),
         ),
         title: coursesAsync.when(
@@ -53,16 +54,16 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
               children: [
                 Text(
                   course.name,
-                  style: const TextStyle(
-                    color: Colors.black,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                   ),
                 ),
                 Text(
                   course.group ?? '',
-                  style: const TextStyle(
-                    color: Colors.grey,
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w300,
                     fontSize: 13,
                   ),
@@ -76,7 +77,7 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.black),
+            icon: Icon(Icons.more_vert, color: colorScheme.onSurface),
             onPressed: () {},
           ),
         ],
@@ -93,13 +94,13 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
                     data: (count) => CourseStatsCard(
                       title: 'Total Alumnos',
                       value: count.toString(),
-                      valueColor: Colors.blue,
+                      valueColor: colorScheme.primary,
                     ),
                     loading: () => const RotatingLoader(size: 15),
-                    error: (_, __) => const CourseStatsCard(
+                    error: (_, __) => CourseStatsCard(
                       title: 'Total Alumnos',
                       value: '-',
-                      valueColor: Colors.red,
+                      valueColor: colorScheme.error,
                     ),
                   ),
                 ),
@@ -111,13 +112,13 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
                         data: (average) => CourseStatsCard(
                           title: 'Promedio General',
                           value: average.toStringAsFixed(1),
-                          valueColor: Colors.blue,
+                          valueColor: colorScheme.primary,
                         ),
                         loading: () => const RotatingLoader(size: 15),
-                        error: (_, __) => const CourseStatsCard(
+                        error: (_, __) => CourseStatsCard(
                           title: 'Promedio General',
                           value: '-',
-                          valueColor: Colors.red,
+                          valueColor: colorScheme.error,
                         ),
                       ),
                 ),
@@ -146,11 +147,18 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
             // Search Bar
             TextField(
               controller: _searchController,
+              style: TextStyle(color: colorScheme.onSurface),
               decoration: InputDecoration(
                 hintText: 'Buscar alumno...',
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                hintStyle: TextStyle(
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: colorScheme.surfaceContainerHighest,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -166,10 +174,13 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
                 .when(
                   data: (enrolledStudents) {
                     if (enrolledStudents.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: Padding(
-                          padding: EdgeInsets.all(32.0),
-                          child: Text('No hay alumnos inscritos'),
+                          padding: const EdgeInsets.all(32.0),
+                          child: Text(
+                            'No hay alumnos inscritos',
+                            style: TextStyle(color: colorScheme.onSurface),
+                          ),
                         ),
                       );
                     }
@@ -198,7 +209,12 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
                     padding: EdgeInsets.all(32.0),
                     child: Center(child: RotatingLoader(size: 30)),
                   ),
-                  error: (error, _) => Center(child: Text('Error: $error')),
+                  error: (error, _) => Center(
+                    child: Text(
+                      'Error: $error',
+                      style: TextStyle(color: colorScheme.error),
+                    ),
+                  ),
                 ),
             const SizedBox(height: 80), // Space for FAB
           ],
