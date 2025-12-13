@@ -5,6 +5,7 @@ import 'package:students_control/features/enrollments/domain/entities/enrolled_s
 import 'package:students_control/features/enrollments/domain/repo/enrollment_repo.dart';
 import 'package:students_control/features/students/data/mapper/student_mapper.dart';
 import 'package:students_control/features/students/data/models/student_model.dart';
+import 'package:students_control/features/students/domain/entity/student.dart';
 
 class EnrollmentRepoImpl implements EnrollmentRepo {
   @override
@@ -77,6 +78,81 @@ class EnrollmentRepoImpl implements EnrollmentRepo {
       }).toList();
 
       return DataResponse.success(data: enrolledStudents);
+    } catch (e) {
+      return DataResponse.error(e.toString());
+    }
+  }
+
+  @override
+  Future<DataResponse<List<Student>>> getAvailableStudentsForCourse(
+    int courseId,
+  ) async {
+    final db = await DatabaseHelper.instance.database;
+    try {
+      final List<Map<String, dynamic>> maps = await db.rawQuery(
+        '''
+        SELECT * FROM students 
+        WHERE id NOT IN (
+          SELECT student_id FROM enrollments WHERE course_id = ?
+        )
+        ORDER BY last_name, first_name
+      ''',
+        [courseId],
+      );
+
+      final students = maps.map((map) {
+        return StudentModel.fromMap(map); // StudentModel is a Student now
+      }).toList();
+
+      return DataResponse.success(data: students);
+    } catch (e) {
+      return DataResponse.error(e.toString());
+    }
+  }
+
+  @override
+  Future<DataResponse<void>> enrollStudents(
+    int courseId,
+    List<int> studentIds,
+  ) async {
+    final db = await DatabaseHelper.instance.database;
+    try {
+      // Get the first available schedule for this course
+      final List<Map<String, dynamic>> schedules = await db.query(
+        'schedules',
+        where: 'course_id = ?',
+        whereArgs: [courseId],
+        limit: 1,
+      );
+
+      int scheduleId;
+      if (schedules.isNotEmpty) {
+        scheduleId = schedules.first['id'] as int;
+      } else {
+        // Create a dummy schedule if none exists
+        scheduleId = await db.insert('schedules', {
+          'course_id': courseId,
+          'day_of_week': 1,
+          'start_time': '00:00',
+          'end_time': '00:00',
+          'classroom': 'Sin asignar',
+        });
+      }
+
+      final batch = db.batch();
+      final now = DateTime.now().toIso8601String();
+
+      for (final studentId in studentIds) {
+        batch.insert('enrollments', {
+          'course_id': courseId,
+          'student_id': studentId,
+          'schedule_id': scheduleId,
+          'enrolled_at': now,
+        });
+      }
+
+      await batch.commit(noResult: true);
+      return DataResponse.success(data: null);
     } catch (e) {
       return DataResponse.error(e.toString());
     }
