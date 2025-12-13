@@ -31,9 +31,9 @@ class AppTheme {
     scaffoldBackgroundColor: _lightBackgroundColor,
     appBarTheme: const AppBarTheme(
       backgroundColor: _lightBackgroundColor,
-      iconTheme: IconThemeData(color: _lightOnPrimaryColor),
+      iconTheme: IconThemeData(color: _lightBackgroundColor),
       titleTextStyle: TextStyle(
-        color: _lightOnPrimaryColor,
+        color: _lightTextColor,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),

@@ -6,6 +6,7 @@ import 'package:students_control/features/login/presentation/pages/login_page.da
 import 'package:students_control/features/teachers/presentation/pages/teacher_register_page.dart';
 import 'package:students_control/features/students/presentation/pages/students_register_page.dart';
 import 'package:students_control/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:students_control/features/enrollments/presentation/pages/register_enrrollment_page.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -34,6 +35,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/register_student',
         builder: (context, state) => const StudentsRegisterPage(),
+      ),
+      GoRoute(
+        path: '/register_enrollment/:courseId',
+        builder: (context, state) {
+          final courseId = int.parse(state.pathParameters['courseId']!);
+          return RegisterEnrollmentPage(courseId: courseId);
+        },
       ),
     ],
   );
