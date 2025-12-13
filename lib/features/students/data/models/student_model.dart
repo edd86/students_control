@@ -1,15 +1,15 @@
 class StudentModel {
-  final int? id;
-  final String firstName;
-  final String lastName;
-  final String? identificationNumber;
-  final String? email;
-  final String? phone;
-  final String? gradeLevel;
-  final String? notes;
-  final String? profilePhoto;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  int? id;
+  String firstName;
+  String lastName;
+  String? identificationNumber;
+  String? email;
+  String? phone;
+  String? gradeLevel;
+  String? notes;
+  String? profilePhoto;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   StudentModel({
     this.id,
