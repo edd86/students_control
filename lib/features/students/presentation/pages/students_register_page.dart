@@ -115,9 +115,10 @@ class _StudentsRegisterPageState extends ConsumerState<StudentsRegisterPage> {
                         color: colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Añadir foto',
                         style: TextStyle(
+                          color: colorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
