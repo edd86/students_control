@@ -9,6 +9,7 @@ import 'package:students_control/features/enrollments/presentation/providers/enr
 import 'package:students_control/features/courses/presentation/widgets/course_schedule_card.dart';
 import 'package:students_control/features/courses/presentation/widgets/course_stats_card.dart';
 import 'package:students_control/features/courses/presentation/widgets/student_list_item.dart';
+import 'package:students_control/features/courses/presentation/widgets/course_options_menu.dart';
 
 class CourseDetailsPage extends ConsumerStatefulWidget {
   final int courseId;
@@ -76,9 +77,12 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: Icon(Icons.more_vert, color: colorScheme.onSurface),
-            onPressed: () {},
+          CourseOptionsMenu(
+            onRegisterStudent: () {
+              context.push('/register_enrollment/${widget.courseId}');
+            },
+            onRegisterHomework: () {},
+            onDelete: () {},
           ),
         ],
       ),
