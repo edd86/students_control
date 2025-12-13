@@ -100,9 +100,9 @@ class EnrollmentRepoImpl implements EnrollmentRepo {
         [courseId],
       );
 
-      final students = maps.map((map) {
-        return StudentModel.fromMap(map); // StudentModel is a Student now
-      }).toList();
+      final students = maps
+          .map((map) => StudentMapper.toEntity(StudentModel.fromMap(map)))
+          .toList();
 
       return DataResponse.success(data: students);
     } catch (e) {
