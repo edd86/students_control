@@ -98,7 +98,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
               // Email Input
               Text(
-                'Correo o Usuario',
+                'Correo o Id',
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
