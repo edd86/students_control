@@ -197,7 +197,7 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
                         // Default to 'presente' if null, or maybe 'presente' is just a visual default
                         // Per user current logic: status ?? AttendanceStatus.presente
                         final status =
-                            enrolled.status ?? AttendanceStatus.presente;
+                            enrolled.status ?? AttendanceStatus.ausente;
 
                         return StudentListItem(
                           student: enrolled.student,
