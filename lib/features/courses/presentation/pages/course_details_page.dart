@@ -73,7 +73,7 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
             );
           },
           loading: () => const RotatingLoader(size: 15),
-          error: (_, __) => const Text('Error'),
+          error: (_, _) => const Text('Error'),
         ),
         centerTitle: true,
         actions: [
@@ -101,7 +101,7 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
                       valueColor: colorScheme.primary,
                     ),
                     loading: () => const RotatingLoader(size: 15),
-                    error: (_, __) => CourseStatsCard(
+                    error: (_, _) => CourseStatsCard(
                       title: 'Total Alumnos',
                       value: '-',
                       valueColor: colorScheme.error,
@@ -119,7 +119,7 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
                           valueColor: colorScheme.primary,
                         ),
                         loading: () => const RotatingLoader(size: 15),
-                        error: (_, __) => CourseStatsCard(
+                        error: (_, _) => CourseStatsCard(
                           title: 'Promedio General',
                           value: '-',
                           valueColor: colorScheme.error,
@@ -144,7 +144,7 @@ class _CourseDetailsPageState extends ConsumerState<CourseDetailsPage> {
                     padding: EdgeInsets.symmetric(vertical: 20),
                     child: RotatingLoader(size: 20),
                   ),
-                  error: (_, __) => const AttendanceSummaryCard(percentage: 0),
+                  error: (_, _) => const AttendanceSummaryCard(percentage: 0),
                 ),
             const SizedBox(height: 24),
 
